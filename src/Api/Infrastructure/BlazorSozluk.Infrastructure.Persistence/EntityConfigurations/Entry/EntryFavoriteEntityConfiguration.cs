@@ -2,11 +2,6 @@
 using BlazorSozluk.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlazorSozluk.Infrastructure.Persistence.EntityConfigurations.Entry
 {
@@ -23,7 +18,8 @@ namespace BlazorSozluk.Infrastructure.Persistence.EntityConfigurations.Entry
 
             builder.HasOne(i => i.CreatedUser)
                 .WithMany(i => i.EntryFavorites)
-                .HasForeignKey(i => i.CreatedById);
+                .HasForeignKey(i => i.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
