@@ -1,5 +1,5 @@
 using BlazorSozluk.Api.Application.Extensions;
-using BlazorSozluk.Api.Application.Features.Commands.User;
+using BlazorSozluk.Api.Application.Features.Commands.User.Login;
 using BlazorSozluk.Infrastructure.Persistence.Extensions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
