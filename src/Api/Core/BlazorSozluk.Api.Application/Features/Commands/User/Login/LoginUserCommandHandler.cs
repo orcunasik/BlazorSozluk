@@ -11,7 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace BlazorSozluk.Api.Application.Features.Commands.User
+namespace BlazorSozluk.Api.Application.Features.Commands.User.Login
 {
     internal class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUserViewModel>
     {
@@ -32,15 +32,15 @@ namespace BlazorSozluk.Api.Application.Features.Commands.User
             if (dbUser == null)
                 throw new DatabaseValidationException("User Not Found");
 
-            var pass = PasswordEncryptor.Encrypt(request.Password);
+            string pass = PasswordEncryptor.Encrypt(request.Password);
             if (dbUser.Password != pass)
                 throw new DatabaseValidationException("Password Is WRONG!!");
 
             if (!dbUser.EmailConfirmed)
                 throw new DatabaseValidationException("Email address is not confirmed yet!");
 
-            var result = mapper.Map<LoginUserViewModel>(dbUser);
-            var claims = new Claim[]
+            LoginUserViewModel result = mapper.Map<LoginUserViewModel>(dbUser);
+            Claim[] claims = new Claim[]
             {
                 new Claim(ClaimTypes.NameIdentifier,dbUser.Id.ToString()),
                 new Claim(ClaimTypes.Email,dbUser.EmailAddress),
@@ -53,14 +53,14 @@ namespace BlazorSozluk.Api.Application.Features.Commands.User
         }
         private string GenerateToken(Claim[] claims)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["AuthConfig:Secret"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiry = DateTime.Now.AddDays(10);
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["AuthConfig:Secret"]));
+            SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            DateTime expiry = DateTime.Now.AddDays(10);
 
-            var token = new JwtSecurityToken(claims:claims,
-                                            expires:expiry,
-                                            signingCredentials:creds,
-                                            notBefore:DateTime.Now);
+            JwtSecurityToken token = new JwtSecurityToken(claims: claims,
+                                            expires: expiry,
+                                            signingCredentials: creds,
+                                            notBefore: DateTime.Now);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
